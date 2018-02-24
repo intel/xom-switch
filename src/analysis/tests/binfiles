@@ -1,0 +1,5 @@
+0   /bin/ls
+0   /bin/sleep 1
+0   /usr/bin/apt-get -v
+0   /usr/bin/nmap -v
+0   /usr/bin/luatex --luaonly files/h.lua

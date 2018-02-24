@@ -1,0 +1,2 @@
+using ./patch-loader.sh <path/to/loader> [final binary]
+
