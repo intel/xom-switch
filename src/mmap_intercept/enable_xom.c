@@ -93,7 +93,7 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
 
 int check_elf_whitelist(void *base, Elf64_Ehdr *elfhdr)
 {
-    char *whitelist[] =  { "libffi.so.6", "libfreeblpriv3.so" };
+    char *whitelist[] =  { "libffi.so.6", "libfreeblpriv3.so", "libavcodec.so.57", "libcrypto.so.1.0.0" };
     int whitelistsize = sizeof(whitelist)/sizeof(char *);
     char *soname = get_elf_soname(base, elfhdr);
     int idx = 0;
@@ -121,7 +121,7 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
 
     int idx = 0;
     if (strncmp(base, ELFMAG, 4) == 0) {
-        simple_printf("matched ELF header!\n");
+        ;//simple_printf("matched ELF header!\n");
     } else {
         simple_printf("did not match ELF header: %s!\n", base);
         return;
@@ -132,27 +132,27 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
         /* Whitelisted library make skip xom. */
         return;
     }
-    simple_printf("section table offset: %x\n", elfheader->e_shoff);
+    //simple_printf("section table offset: %x\n", elfheader->e_shoff);
     sectablesize = elfheader->e_shnum * elfheader->e_shentsize;
     pgsectablesize = round_up_pgsize(elfheader->e_shoff + sectablesize) -
                      round_down_pgsize(elfheader->e_shoff);
-    simple_printf("section table size: %x\n", sectablesize);
+    //simple_printf("section table size: %x\n", sectablesize);
     pgsectable = ldso_mmap(NULL, pgsectablesize, PROT_READ,
                            MAP_PRIVATE|MAP_DENYWRITE, fd,
                            round_down_pgsize(elfheader->e_shoff));
-    simple_printf("section table mmaped at address: %lx\n", pgsectable);
+    //simple_printf("section table mmaped at address: %lx\n", pgsectable);
     sectable = pgsectable + (elfheader->e_shoff -
                              round_down_pgsize(elfheader->e_shoff));
-    simple_printf("section table is at address: %lx\n", sectable);
+    //simple_printf("section table is at address: %lx\n", sectable);
     Elf64_Shdr *sectionheader = (Elf64_Shdr *)sectable;
-    simple_printf("section table entry number: %x\n", elfheader->e_shnum);
+    //simple_printf("section table entry number: %x\n", elfheader->e_shnum);
 
     /* Traverse section table and figure out true executable region. */
     for (idx = 0; idx < elfheader->e_shnum; idx++) {
         if (sectionheader->sh_flags & SHF_EXECINSTR) {
             if (execstart == NULL)
                 execstart = (void *)sectionheader->sh_addr;
-            simple_printf("executable section idx: %x\n", idx);
+            //simple_printf("executable section idx: %x\n", idx);
         } else if (!(sectionheader->sh_flags & SHF_EXECINSTR) &&
                    execstart != NULL && execend == NULL) {
             execend = (void *)sectionheader->sh_addr;
@@ -160,18 +160,18 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
         }
         sectionheader++;
     }
-    simple_printf("executable execstart (offset): %lx\n", execstart);
-    simple_printf("executable execend (offset): %lx\n", execend);
+    //simple_printf("executable execstart (offset): %lx\n", execstart);
+    //simple_printf("executable execend (offset): %lx\n", execend);
     execstart = (void *)((size_t)base + (size_t)round_up_pgsize((size_t)execstart));
     execend   = (void *)((size_t)base + (size_t)round_down_pgsize((size_t)execend));
     if ((size_t)execstart >= (size_t)execend) {
-        simple_printf("executable only region is 0\n");
+        //simple_printf("executable only region is 0\n");
         return;
     }
     execsize  = (size_t)execend - (size_t)execstart;
     ldso_mprotect(execstart, execsize, PROT_EXEC);
-    simple_printf("executable execstart: %lx\n", execstart);
-    simple_printf("executable execend: %lx\n", execend);
+    //simple_printf("executable execstart: %lx\n", execstart);
+    //simple_printf("executable execend: %lx\n", execend);
 
     /* TODO: Mark elf metadata as read-only. */
 
