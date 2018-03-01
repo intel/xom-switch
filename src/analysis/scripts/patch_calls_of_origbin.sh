@@ -20,7 +20,7 @@ injectexe=$4
 #target address was the entry point of original binary
 echo "patching addresses stored in file: $addrfile"
 
-textoffset=$(r2 -A -qc "iS~.text[1]" $injectexe)
+textoffset=$(r2 -qc "iS~.text[1]" $injectexe)
 echo $textoffset
 textoffset4BC=$(printf "%X" $textoffset)
 #we preserve the offset within page
@@ -28,11 +28,11 @@ offsetinpage=$(echo "obase=10; ibase=16; $textoffset4BC % 1000" | bc)
 echo "offset in page: $offsetinpage"
 offsetinpageHEX=$(printf "0x%x" $offsetinpage)
 
-entryoffset=$(r2 -A -qc "is~ $symbol[1]" $injectexe)
+entryoffset=$(r2 -qc "is~ $symbol[1]" $injectexe)
 echo $entryoffset
 offset=$((entryoffset-textoffset))
 echo $offset
-base=$(r2 -A -qc "iS~.instrumented_code[3]" $exe)
+base=$(r2 -qc "iS~.instrumented_code[3]" $exe)
 echo $base
 target=$((base + offset + offsetinpage))
 echo "target value is: $target"

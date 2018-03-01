@@ -5,57 +5,13 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <elf.h>
-#include <string.h>
+#include "utils.h"
 extern void *ldso_mmap(void *addr, size_t len, int prot, int flags,
                        int filedes, off_t off);
 extern void *ldso_mprotect(void *addr, size_t len, int prot);
 extern void simple_printf(char *fmt, ...);
+extern int __munmap(void *addr, size_t length);
 
-int strcmp(const char *s1, const char *s2)
-{
-    unsigned char uc1, uc2;
-    while (*s1 != '\0' && *s1 == *s2) {
-        s1++;
-        s2++;
-    }
-    uc1 = (*(unsigned char *) s1);
-    uc2 = (*(unsigned char *) s2);
-    return ((uc1 < uc2) ? -1 : (uc1 > uc2));
-}
-
-int strncmp(const char *s1, const char *s2, size_t n)
-{
-    unsigned char uc1, uc2;
-    /* Nothing to compare?  Return zero.  */
-    if (n == 0)
-        return 0;
-    /* Loop, comparing bytes.  */
-    while (n-- > 0 && *s1 == *s2) {
-        /* If we've run out of bytes or hit a null, return zero
-           since we already know *s1 == *s2.  */
-        if (n == 0 || *s1 == '\0')
-            return 0;
-        s1++;
-        s2++;
-    }
-    uc1 = (*(unsigned char *) s1);
-    uc2 = (*(unsigned char *) s2);
-    return ((uc1 < uc2) ? -1 : (uc1 > uc2));
-}
-
-int round_up_pgsize(int size)
-{
-    if (size % 0x1000 == 0)
-        return size;
-    return size - (size % 0x1000) + 0x1000;
-}
-
-int round_down_pgsize(int size)
-{
-    if (size % 0x1000 == 0)
-        return size;
-    return size - (size % 0x1000);
-}
 char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
 {
     int idx = 0;
@@ -66,13 +22,13 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
     Elf64_Phdr *phdr = base + elfhdr->e_phoff;
     /* Get Dynamic Segment Offset. */
     for (idx = 0; idx < phdrent; idx++) {
-        if(phdr->p_type == PT_DYNAMIC) {
+        if (phdr->p_type == PT_DYNAMIC) {
             dynamic = (Elf64_Dyn *)(base + phdr->p_offset);
             break;
         }
         phdr++;
     }
-    if(dynamic == NULL) {
+    if (dynamic == NULL) {
         simple_printf("failed to find dynamic segment.\n");
         return NULL;
     }
@@ -84,7 +40,7 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
             dynstr_offset = dynamic->d_un.d_val;
         dynamic++;
     }
-    if(soname_offset == -1 || dynstr_offset == -1) {
+    if (soname_offset == -1 || dynstr_offset == -1) {
         simple_printf("failed to find soname or dynstr offset.\n");
         return NULL;
     }
@@ -103,7 +59,7 @@ int check_elf_whitelist(void *base, Elf64_Ehdr *elfhdr)
     }
     simple_printf("this elf is ===== :%s\n", soname);
     for (idx = 0; idx < whitelistsize; idx++) {
-        if(strcmp(soname , whitelist[idx]) == 0)
+        if (strcmp(soname , whitelist[idx]) == 0)
             return 1;
     }
     return 0;
@@ -115,10 +71,16 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
     void *pgsectable = NULL;
     void *execstart = NULL;
     void *execend = NULL;
+    void *pgupexecstart = NULL;
+    void *pgdownexecstart = NULL;
+    void *pgupexecend = NULL;
+    void *pgdownexecend = NULL;
+    void *pgupcodesegend = NULL;
     int execsize = 0;
     int sectablesize = 0;
     int pgsectablesize = 0;
-
+    int pgelfmetasize = 0;
+    int pgrodatasize = 0;
     int idx = 0;
     if (strncmp(base, ELFMAG, 4) == 0) {
         ;//simple_printf("matched ELF header!\n");
@@ -126,26 +88,35 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
         simple_printf("did not match ELF header: %s!\n", base);
         return;
     }
-    /* Figure out section table location and mmap it into memmory. */
+    /* Traverse PHDR table and figure out code segment range. */
     Elf64_Ehdr *elfheader = (Elf64_Ehdr *)base;
-    if(check_elf_whitelist(base, elfheader) == 1) {
+    Elf64_Phdr *phdr = base + elfheader->e_phoff;
+    int phdrent = elfheader->e_phnum;
+    for (idx = 0; idx < phdrent; idx++) {
+        if (phdr->p_type == PT_LOAD && phdr->p_flags == (PF_X|PF_R)) {
+            pgupcodesegend = (void *)(base + round_up_pgsize(phdr->p_memsz));
+            break;
+        }
+        phdr++;
+    }
+    if (pgupcodesegend == NULL) {
+        simple_printf("code segment does not exist, return");
+        return;
+    }
+    /* Figure out section table location and mmap it into memmory. */
+    if (check_elf_whitelist(base, elfheader) == 1) {
         /* Whitelisted library make skip xom. */
         return;
     }
-    //simple_printf("section table offset: %x\n", elfheader->e_shoff);
     sectablesize = elfheader->e_shnum * elfheader->e_shentsize;
     pgsectablesize = round_up_pgsize(elfheader->e_shoff + sectablesize) -
                      round_down_pgsize(elfheader->e_shoff);
-    //simple_printf("section table size: %x\n", sectablesize);
     pgsectable = ldso_mmap(NULL, pgsectablesize, PROT_READ,
                            MAP_PRIVATE|MAP_DENYWRITE, fd,
                            round_down_pgsize(elfheader->e_shoff));
-    //simple_printf("section table mmaped at address: %lx\n", pgsectable);
     sectable = pgsectable + (elfheader->e_shoff -
                              round_down_pgsize(elfheader->e_shoff));
-    //simple_printf("section table is at address: %lx\n", sectable);
     Elf64_Shdr *sectionheader = (Elf64_Shdr *)sectable;
-    //simple_printf("section table entry number: %x\n", elfheader->e_shnum);
 
     /* Traverse section table and figure out true executable region. */
     for (idx = 0; idx < elfheader->e_shnum; idx++) {
@@ -160,21 +131,24 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
         }
         sectionheader++;
     }
-    //simple_printf("executable execstart (offset): %lx\n", execstart);
-    //simple_printf("executable execend (offset): %lx\n", execend);
-    execstart = (void *)((size_t)base + (size_t)round_up_pgsize((size_t)execstart));
-    execend   = (void *)((size_t)base + (size_t)round_down_pgsize((size_t)execend));
-    if ((size_t)execstart >= (size_t)execend) {
-        //simple_printf("executable only region is 0\n");
-        return;
+    pgdownexecstart = (void *)((size_t)base + (size_t)round_down_pgsize((size_t)execstart));
+    pgupexecstart = (void *)((size_t)base + (size_t)round_up_pgsize((size_t)execstart));
+    pgdownexecend = (void *)((size_t)base + (size_t)round_down_pgsize((size_t)execend));
+    pgupexecend = (void *)((size_t)base + (size_t)round_up_pgsize((size_t)execend));
+    execsize  = (size_t)pgdownexecend - (size_t)pgupexecstart;
+    if (execsize > 0) {
+        ldso_mprotect(pgupexecstart, execsize, PROT_EXEC);
     }
-    execsize  = (size_t)execend - (size_t)execstart;
-    ldso_mprotect(execstart, execsize, PROT_EXEC);
-    //simple_printf("executable execstart: %lx\n", execstart);
-    //simple_printf("executable execend: %lx\n", execend);
-
     /* TODO: Mark elf metadata as read-only. */
-
-
+    pgelfmetasize = (int)((size_t)pgdownexecstart - (size_t)base);
+    if (pgelfmetasize > 0)
+        ldso_mprotect((void *)base, pgelfmetasize, PROT_READ);
     /* TODO: Mark read-only section in code segment as read-only. */
+    pgrodatasize = (int)((size_t)pgupcodesegend - (size_t)pgupexecend);
+    if(pgrodatasize > 0)
+        ldso_mprotect((void *)pgupexecend, pgrodatasize, PROT_READ);
+
+    out:
+    __munmap((void *)pgsectable, pgsectablesize);
+    return;
 }

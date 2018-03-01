@@ -25,7 +25,7 @@ progdir=$(readlink -f $(dirname $0))
 syscalladdr=$($progdir/analyze_syscall.sh $syscall $origexe)
 syscalladdr=$((syscalladdr+offset2symbol))
 echo "$syscall wrapper function address: $syscalladdr"
-textoffset=$(r2 -A -qc "iS~.text[1]" $injectexe)
+textoffset=$(r2 -qc "iS~.text[1]" $injectexe)
 echo $textoffset
 textoffset4BC=$(printf "%X" $textoffset)
 #we preserve the offset within page
@@ -34,10 +34,10 @@ echo "offset in page: $offsetinpage"
 offsetinpageHEX=$(printf "0x%x" $offsetinpage)
 echo "offset in page (hex): $offsetinpageHEX"
 
-topatchoffset=$(r2 -A -qc "is~$callname[1]" $injectexe)
+topatchoffset=$(r2 -qc "is~$callname[1]" $injectexe)
 echo $topatchoffset
 offset=$((topatchoffset - textoffset))
-base=$(r2 -A -qc "iS~.instrumented_code[3]" $exe)
+base=$(r2 -qc "iS~.instrumented_code[3]" $exe)
 echo $base
 
 patchaddr=$((base + offset + offsetinpage))
