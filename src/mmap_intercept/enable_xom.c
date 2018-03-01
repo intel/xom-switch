@@ -10,7 +10,7 @@ extern void *ldso_mmap(void *addr, size_t len, int prot, int flags,
                        int filedes, off_t off);
 extern void *ldso_mprotect(void *addr, size_t len, int prot);
 extern void simple_printf(char *fmt, ...);
-extern int __munmap(void *addr, size_t length);
+extern int __syscall(int number, ...);
 
 char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
 {
@@ -149,6 +149,6 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
         ldso_mprotect((void *)pgupexecend, pgrodatasize, PROT_READ);
 
     out:
-    __munmap((void *)pgsectable, pgsectablesize);
+    __syscall(__NR_munmap, (void *)pgsectable, pgsectablesize);
     return;
 }

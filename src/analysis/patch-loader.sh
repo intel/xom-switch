@@ -67,7 +67,7 @@ $scriptdir/patch_call_of_injectedbin.sh _dl_debug_vdprintf writev $targetexe \
 
 $scriptdir/analyze_mmap_callsites.sh mmap $newexe > $addrfile
 
-$scriptdir/patch_calls_of_origbin.sh $addrfile _start $targetexe $elf2inject; 
+$scriptdir/patch_calls_of_origbin.sh $addrfile _wrapper_mmap $targetexe $elf2inject; 
 
 echo "We add XOM related segments back to the ELF binary"
 $scriptdir/adjust_phnum.sh increase $targetexe

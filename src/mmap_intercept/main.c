@@ -6,14 +6,14 @@
 #include <stdarg.h>
 
 extern void *ldso_mmap(void *addr, size_t len, int prot, int flags, int filedes, off_t off);
-extern void _dl_debug_vdprintf(int fd, int tag, const char *fmt, va_list arg);
+extern void ldso_dl_debug_vdprintf(int fd, int tag, const char *fmt, va_list arg);
 extern void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t off);
 
 void simple_printf(char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    _dl_debug_vdprintf(1, 0, fmt, ap);
+    ldso_dl_debug_vdprintf(1, 0, fmt, ap);
     va_end(ap);
     return;
 }

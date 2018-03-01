@@ -46,7 +46,7 @@ newexe=$(mktemp)
 
 $vinopath/inject_instrumentation.py -i $elf2inject -f $exe -o $targetexe
 
-execveaddr=$(r2 -A $exe -qc "/s~execve:0[:1]")
+execveaddr=$(r2 $exe -qc "/s~execve:0[:1]")
 if [ "$execveaddr" == "" ]; then
     echo "[Error] failed to find execve address, abort"
     exit 1
