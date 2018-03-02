@@ -1,0 +1,6 @@
+*.o
+log_*
+ld.so
+libkkk.so.6
+libc.so.6
+log
