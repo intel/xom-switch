@@ -29,7 +29,7 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
         phdr++;
     }
     if (dynamic == NULL) {
-        simple_printf("failed to find dynamic segment.\n");
+        //simple_printf("failed to find dynamic segment.\n");
         return NULL;
     }
     /* Traverse Dynamic Segment. */
@@ -41,7 +41,7 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
         dynamic++;
     }
     if (soname_offset == -1 || dynstr_offset == -1) {
-        simple_printf("failed to find soname or dynstr offset.\n");
+        //simple_printf("failed to find soname or dynstr offset.\n");
         return NULL;
     }
     return base + soname_offset + dynstr_offset;
@@ -57,7 +57,7 @@ int check_elf_whitelist(void *base, Elf64_Ehdr *elfhdr)
         /* Executable does not have SO_NAME. */
         return 0;
     }
-    simple_printf("this elf is ===== :%s\n", soname);
+    //simple_printf("this elf is ===== :%s\n", soname);
     for (idx = 0; idx < whitelistsize; idx++) {
         if (strcmp(soname , whitelist[idx]) == 0)
             return 1;

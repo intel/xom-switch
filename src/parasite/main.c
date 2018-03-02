@@ -47,7 +47,7 @@ int wrapper_syscall_execve(const char *filename, char *const argv[], char *const
     int fd = __syscall(__NR_open, filename, O_CLOEXEC|O_RDONLY);
     __syscall(__NR_read, fd, buf, 4);
     if(strncmp(buf, "\177ELF", 4) == 0) {
-        filename = "/home/mingwei/projects/xom_enabling-blackhat18/src/analysis/ld.so";
+        filename = "/lib64/ld-xom.so";
         for(idx = 0; argv[idx] != NULL; idx++) {
             newargv[idx+1] = argv[idx];
         }
