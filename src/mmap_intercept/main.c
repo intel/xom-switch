@@ -4,11 +4,13 @@
 #include <sys/types.h>
 #include <stddef.h>
 #include <stdarg.h>
-
+#include <sys/stat.h>
+#include <fcntl.h>
+#include "utils.h"
 extern void *ldso_mmap(void *addr, size_t len, int prot, int flags, int filedes, off_t off);
 extern void ldso_dl_debug_vdprintf(int fd, int tag, const char *fmt, va_list arg);
 extern void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t off);
-
+extern int __syscall(int num, ...);
 void simple_printf(char *fmt, ...)
 {
     va_list ap;
@@ -38,21 +40,26 @@ int wrapper_syscall_execve(const char *filename, char *const argv[], char *const
     int idx;
     int argc;
     char ** argvptr = (char **)argv;
-	filename = "/home/mingwei/projects/xom_enabling-blackhat18/src/analysis/ld.so";
+    char buf[5] = {'\0'};
     for(idx = 0; argvptr[idx] != NULL; idx++);
     argc = idx;
     char *newargv[idx + 2];
-    for(idx = 0; argv[idx] != NULL; idx++) {
-        newargv[idx+1] = argv[idx];
+    int fd = __syscall(__NR_open, filename, O_CLOEXEC|O_RDONLY);
+    __syscall(__NR_read, fd, buf, 4);
+    if(strncmp(buf, "\177ELF", 4) == 0) {
+        filename = "/home/mingwei/projects/xom_enabling-blackhat18/src/analysis/ld.so";
+        for(idx = 0; argv[idx] != NULL; idx++) {
+            newargv[idx+1] = argv[idx];
+        }
+        newargv[0] = (char *)filename;
+        newargv[argc+1] = NULL;
+        argvptr = (char **)newargv;
     }
-    newargv[0] = (char *)filename;
-    newargv[argc+1] = NULL;
-	//simple_printf("binary of execve(2) changed to %s\n", filename);
 	__asm__ volatile ("syscall"
 			:"=a" (ret)
 			:"a"(59), // syscall number (execve)
 			 "D"(filename), // filename
-			 "S"(newargv), // arguments
+			 "S"(argvptr), // arguments
 			 "d"(envp) // env
 			:"rcx","r11","cc");
 	return ret;
