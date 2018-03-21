@@ -13,6 +13,7 @@ loader (ld.so).
 ### Prerequsites
 
 xom-switch requires two tools:
+  - gcc (or alternative compiler e.g, llvm)
   - python 2.7
   - radare2, a static binary analyzer, which could be found in [here](https://github.com/radare/radare2.git)
 
@@ -20,13 +21,13 @@ xom-switch requires two tools:
 xom-switch consists of three modules:
  - vino: static binary rewriter.
  - patch: C code piece that will be patched into program loader
- - analyzer: analyzer of the program loader using radare2
+ - analysis: analyzer of the program loader using radare2
 
 ### Patching
  - install python 2.7 and radare2
- - patch your loader: `src/analyzer/patch_loader.sh /lib64/ld-linux-x86-64.so.2 /your/new/ld.so`
+ - patch your loader: `src/analysis/patch_loader.sh /lib64/ld-linux-x86-64.so.2 /your/new/ld.so`
  - copy your loader to system dir: ```sudo mv /your/new/ld.so /lib64/ld-xom.so```
- - patch your libc.so (optional): ```src/analyzer/patch_libc.sh /lib/x86_64-linux-gnu/libc.so.6 /your/new/libc.so```
+ - patch your libc.so (optional): ```src/analysis/patch_libc.sh /lib/x86_64-linux-gnu/libc.so.6 /your/new/libc.so```
 
 Note: patching your libc allows you to apply XOM to their child processes spawned through execve(2).
 
