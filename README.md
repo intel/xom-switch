@@ -13,7 +13,7 @@ loader (ld.so).
 ### Prerequsites
 
 xom-switch requires two tools:
-  - gcc (or alternative compiler e.g, llvm)
+  - gcc
   - python 2.7
   - radare2, a static binary analyzer, which could be found in [here](https://github.com/radare/radare2.git)
 
