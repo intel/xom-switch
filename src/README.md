@@ -34,5 +34,6 @@ xom-switch consists of three modules:
  -- run your program: /lib64/ld-xom.so /path/to/your/program
 
 [LICENSE]
+
 This code is published under GPLv2 or later version.
 
