@@ -25,9 +25,9 @@ xom-switch consists of three modules:
 
 ### Patching
  - install python 2.7 and radare2
- - patch your loader: `src/analysis/patch_loader.sh /lib64/ld-linux-x86-64.so.2 /your/new/ld.so`
+ - patch your loader: `src/analysis/patch-loader.sh /lib64/ld-linux-x86-64.so.2 /your/new/ld.so`
  - copy your loader to system dir: ```sudo mv /your/new/ld.so /lib64/ld-xom.so```
- - patch your libc.so (optional): ```src/analysis/patch_libc.sh /lib/x86_64-linux-gnu/libc.so.6 /your/new/libc.so```
+ - patch your libc.so (optional): ```src/analysis/patch-libc.sh /lib/x86_64-linux-gnu/libc.so.6 /your/new/libc.so```
 
 Note: patching your libc allows you to apply XOM to their child processes spawned through execve(2).
 
