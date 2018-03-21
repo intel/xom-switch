@@ -1,9 +1,7 @@
 #!/bin/bash
-#TODO: adding code to check existence of r2
-#TODO: adding code to notify user to add path of vino
 
-vinopath=/home/mingwei/projects/vino/examples
 progdir=$(readlink -f $(dirname $0))
+vinopath=$progdir/../vino/examples
 scriptdir=$progdir/scripts
 
 if [ $# -lt 1 ]; then
@@ -27,7 +25,11 @@ if [ "$targetexe" == "" ]; then
     targetexe=$(mktemp)
     echo "final binary name: $targetexe"
 fi
-
+r2path=$(command -v r2)
+if [ "$r2path" == "" ]; then
+    echo "[Error] Please ensure that Radare2 is properly installed."
+    exit 1
+fi
 # Compile to-be-injected binary.
 echo "[Generating] xomenable code..."
 cd $progdir
