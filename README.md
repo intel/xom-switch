@@ -42,3 +42,10 @@ This code is published under GPLv2 version.
 ## Clarification
 
 This code is for demo purpose only and the status of code is "alpha".
+
+## Task List
+
+- [x] Support CentOS 7.2.
+- [x] Support CentOS 7.4.
+- [x] Support Ubuntu 17.04.
+- [ ] Support Amazon Linux 2 LTS Candidate AMI 2017.12.0 (HVM) with C5 instance.
