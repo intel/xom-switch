@@ -14,8 +14,7 @@ loader (ld.so).
 
 xom-switch requires two tools:
   - python 2.7
-  - radare2, static binary analyzer, which could be found here:
-     https://github.com/radare/radare2.git
+  - radare2, a static binary analyzer, which could be found in [here](https://github.com/radare/radare2.git)
 
 ### Components
 xom-switch consists of three modules:
