@@ -19,7 +19,7 @@ xom-switch requires two tools:
 
 ### Components
 xom-switch consists of three modules:
- - vino: static binary rewriter.
+ - rewriter: static binary rewriter.
  - patch: C code piece that will be patched into program loader
  - analysis: analyzer of the program loader using radare2
 

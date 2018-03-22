@@ -1,7 +1,7 @@
 #!/bin/bash
 
 progdir=$(readlink -f $(dirname $0))
-vinopath=$progdir/../vino/examples
+rewriterpath=$progdir/../rewriter/examples
 scriptdir=$progdir/scripts
 
 if [ $# -lt 1 ]; then
@@ -46,7 +46,7 @@ elf2inject=$progdir/../patch/xomenable
 addrfile=$(mktemp)
 newexe=$(mktemp)
 
-$vinopath/inject_instrumentation.py -i $elf2inject -f $exe -o $targetexe
+$rewriterpath/inject_instrumentation.py -i $elf2inject -f $exe -o $targetexe
 
 execveaddr=$(r2 $exe -qc "/s~execve:0[:1]")
 if [ "$execveaddr" == "" ]; then

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 progdir=$(readlink -f $(dirname $0))
-vinopath=$progdir/../vino/examples
+rewriterpath=$progdir/../rewriter/examples
 scriptdir=$progdir/scripts
 
 if [ $# -lt 1 ]; then
@@ -46,7 +46,7 @@ elf2inject=$progdir/../patch/xomenable
 addrfile=$(mktemp)
 newexe=$(mktemp)
 
-$vinopath/xom_enable.py -f $exe -o $newexe
+$rewriterpath/xom_enable.py -f $exe -o $newexe
 
 echo "We assume XOM has been added to the ELF binary, so first we remove it"
 #
@@ -58,7 +58,7 @@ echo "We assume XOM has been added to the ELF binary, so first we remove it"
 #
 $scriptdir/adjust_phnum.sh decrease $newexe
 
-$vinopath/inject_instrumentation.py -i $elf2inject -f $newexe -o $targetexe
+$rewriterpath/inject_instrumentation.py -i $elf2inject -f $newexe -o $targetexe
 
 $scriptdir/patch_call_of_injectedbin.sh ldso_mmap mmap $targetexe $elf2inject \
                                       $exe;
