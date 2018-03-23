@@ -1,4 +1,5 @@
  # XOM-Switch
+ **(eXecutable-Only Memory Switch)**
 
 xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux
 system. It aims to mitigate code disclosure guided ROP attacks by using Intel
