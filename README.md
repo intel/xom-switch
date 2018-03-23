@@ -6,8 +6,9 @@ xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux syste
 ## Background
 
 ### Why eXecutable-Only Memory
- - [JIT-ROP Attack](https://cs.unc.edu/~fabian/papers/oakland2013.pdf)
- - [Hacking Blind Attack](http://www.scs.stanford.edu/~sorbo/brop/bittau-brop.pdf)
+ - Protect randomized code.
+ - Defend against [JIT-ROP Attack](https://cs.unc.edu/~fabian/papers/oakland2013.pdf).
+ - Defend against [Hacking Blind Attack](http://www.scs.stanford.edu/~sorbo/brop/bittau-brop.pdf).
  
 ### Hardware Support
  - [LWN: Memory Protection Keys](https://lwn.net/Articles/643797/)
