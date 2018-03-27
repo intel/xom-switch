@@ -4,7 +4,7 @@ progdir=$(readlink -f $(dirname $0))
 binfile="$progdir/binfiles"
 echo "[Rewriting] loader code"
 $progdir/../patch-loader.sh /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 \
-    $progdir/../../patch/xomenable $progdir/ld.so \
+    $progdir/../../patch/xomenable/xomenable $progdir/ld.so \
     >$progdir/.rewritelog 2>&1
 if [ $? -ne 0 ]; then
     echo  "[Error] generating ld.so"

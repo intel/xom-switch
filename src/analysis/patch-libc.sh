@@ -33,15 +33,15 @@ fi
 # Compile to-be-injected binary.
 echo "[Generating] xomenable code..."
 cd $progdir
-make -C ../patch/ clean
-make -C ../patch/
+make -C ../patch/xomenable/ clean
+make -C ../patch/xomenable/
 if [ $? -ne 0 ]; then
     echo "[Error] compiling xomenable code, please check your gcc setup."
     cd $OLDPWD
     exit 1
 fi
 cd $OLDPWD
-elf2inject=$progdir/../patch/xomenable
+elf2inject=$progdir/../patch/xomenable/xomenable
 
 addrfile=$(mktemp)
 newexe=$(mktemp)
