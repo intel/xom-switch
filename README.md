@@ -16,7 +16,7 @@ xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux syste
  - [ARM's eXecutable-Only Memory](http://infocenter.arm.com/help/topic/com.arm.doc.dui0471j/chr1368698326509.html)
  
 ### Software Enabling
- - [XOM Enabling on Intel: BlackHat Asia 2018 Presentation](../presentation/xom-switch-bhasia-2018-v1.3.pdf)
+ - [XOM Enabling on Intel: BlackHat Asia 2018 Presentation](presentation/xom-switch-bhasia-2018-v1.3.pdf)
  - [XOM Enabling on ARM: NORAX](https://www.longlu.org/downloads/NORAX.pdf)
 
 
