@@ -34,6 +34,8 @@ Finish the steps in [patch](../patch/README.md) to see how to write your instrum
 
 Instrument the binary with your instrumentation code.
 ```
-./example/inject_only_code_segment.py -f /bin/ls -i instrument_code -o myls
+./example/inject_instrumentation.py -f /bin/ls -i instrument_code -o myls
 ./myls
 ```
+Note:
+ - Instrumentation code written in C has limited support that only local variable and constant variable definition is supported. Global variable support will be future work.
