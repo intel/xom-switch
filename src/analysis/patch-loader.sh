@@ -60,16 +60,17 @@ $scriptdir/adjust_phnum.sh decrease $newexe
 
 $rewriterpath/inject_instrumentation.py -i $elf2inject -f $newexe -o $targetexe
 
-$scriptdir/patch_call_of_injectedbin.sh ldso_mmap mmap $targetexe $elf2inject \
-                                      $exe;
-$scriptdir/patch_call_of_injectedbin.sh ldso_mprotect mprotect $targetexe \
-                                      $elf2inject $exe;
-$scriptdir/patch_call_of_injectedbin.sh _dl_debug_vdprintf writev $targetexe \
-                                      $elf2inject $exe;
+$scriptdir/patch_call_of_injectedbin.sh ldso_mmap syscall:mmap $targetexe \
+                                        $elf2inject $exe;
+$scriptdir/patch_call_of_injectedbin.sh ldso_mprotect syscall:mprotect \
+                                        $targetexe $elf2inject $exe;
+$scriptdir/patch_call_of_injectedbin.sh _dl_debug_vdprintf syscall:writev \
+                                        $targetexe $elf2inject $exe;
 
 $scriptdir/analyze_mmap_callsites.sh mmap $newexe > $addrfile
 
-$scriptdir/patch_calls_of_origbin.sh $addrfile _wrapper_mmap $targetexe $elf2inject; 
+$scriptdir/patch_calls_of_origbin.sh $addrfile _wrapper_mmap $targetexe \
+                                     $elf2inject; 
 
 echo "We add XOM related segments back to the ELF binary"
 $scriptdir/adjust_phnum.sh increase $targetexe

@@ -7,7 +7,7 @@ syscall=$1
 exe=$2
 a=$(r2 -qc "/s~$syscall[:0]" $exe | awk '{print $1}')
 if [ "$a" == "" ]; then
-    echo "cannot find address of syscall $syscall, abort"
+    #echo "cannot find address of syscall $syscall, abort"
     exit 1
 fi
 #echo $a

@@ -22,8 +22,33 @@ if [ "$offset2symbol" == "" ]; then
     offsetsymbol=0
 fi
 progdir=$(readlink -f $(dirname $0))
-syscalladdr=$($progdir/analyze_syscall.sh $syscall $origexe)
-syscalladdr=$((syscalladdr+offset2symbol))
+ftype=$(echo $syscall|awk -F":" '{print $1}')
+fname=$(echo $syscall|sed  "s/^${ftype}//g; s/^://g")
+if [ "$fname" == "" ]; then
+    echo "  [ERROR] invalid function name."
+    exit 1
+fi
+syscalladdr=0
+if [ "$ftype" == "syscall" ]; then
+    syscalladdr=$($progdir/analyze_syscall.sh $fname $origexe)
+    syscalladdr=$((syscalladdr+offsetsymbol))
+elif [ "$ftype" == "pltcall" ]; then
+    syscalladdr=$($progdir/analyze_pltcall.sh $fname $origexe)
+    syscalladdr=$((syscalladdr+offsetsymbol))
+elif [ "$ftype" == "dynsym" ]; then
+    echo "  [ERROR] function type not supported yet."
+    exit 1
+elif [ "$ftype" == "symbol" ]; then
+    echo "  [ERROR] function type not supported yet."
+    exit 1
+elif [ "$ftype" == "addr" ]; then
+    echo "  [ERROR] function type not supported yet."
+    exit 1
+else
+    echo "  [ERROR] invalid  function type"
+    exit 1
+fi
+echo "$fname"
 echo "$syscall wrapper function address: $syscalladdr"
 textoffset=$(r2 -qc "iS~.text[1]" $injectexe)
 echo $textoffset
