@@ -1419,8 +1419,10 @@ class  elf_basic(elf_helper):
         gen_asm_offset = self.get_section_info(binname, secname, "offset");
         gen_asm_size = self.get_section_info(binname, secname, "size");
         if(gen_asm_offset == None):
-            print "extract_data: "+binname+" file does not exist";
-            return;
+            gen_asm_offset = 0
+            gen_asm_size = 0
+            #print "extract_data: "+binname+" file does not exist";
+            #return;
         self._extract_data(binname, gen_asm_offset, gen_asm_size, output,
                            padalignpage, padbyte)
 
