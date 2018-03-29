@@ -29,7 +29,7 @@ Note:
  - "/bin/ls" is the file you want to instrument;
  - only the ".text" section of test.o will be injected into /bin/ls
  
-### Writing your code in C (limited support) and inject your code.
+### Writing your code in C (limited support) and instrument original code.
 Finish the steps in [tutorial](../patch/tutorial/README.md) to see how to write your instrumentation code in C.
 
 Instrument the binary with your instrumentation code.
