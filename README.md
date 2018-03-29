@@ -36,9 +36,9 @@ xom-switch requires two tools:
 
 ### Components
 xom-switch consists of three modules:
- - [rewriter](src/rewriter/README.md): a static binary rewriter for x86 ELF binaries.
- - patch: C code piece that will be patched into program loader
- - analysis: analyzer of the program loader using radare2
+ - [binary rewriter](src/rewriter/README.md): a static binary rewriter for x86 ELF binaries.
+ - patch: C code pieces that will be patched into program loader
+ - analysis: analyzer/instrumentor of the program loader using radare2
 
 ### Patching
  - install python 2.7 and radare2
