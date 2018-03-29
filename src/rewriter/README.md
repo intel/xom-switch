@@ -1,4 +1,4 @@
-## Rewriter
+## ELF Binary Rewriter
 This is a baseline binary instrumentation tool for x86 ELF binaries on Linux. It works on both 64-bit and 32-bit ELF files and it works properly on Position-Independent Executable (PIE), non-PIE and shared libaries.
 
 ## Background
