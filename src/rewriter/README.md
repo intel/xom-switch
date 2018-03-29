@@ -1,4 +1,4 @@
-## Rewriter
+## ELF Binary Rewriter
 This is a baseline binary instrumentation tool for x86 ELF binaries on Linux. It works on both 64-bit and 32-bit ELF files and it works properly on Position-Independent Executable (PIE), non-PIE and shared libaries.
 
 ## Background
@@ -29,13 +29,15 @@ Note:
  - "/bin/ls" is the file you want to instrument;
  - only the ".text" section of test.o will be injected into /bin/ls
  
-### Writing your code in C (limited support) and inject your code.
-Finish the steps in [patch](../patch/README.md) to see how to write your instrumentation code in C.
+### Writing your code in C (limited support) and instrument original code.
+Finish the steps in [tutorial](../patch/tutorial/README.md) to see how to write your instrumentation code in C.
 
 Instrument the binary with your instrumentation code.
 ```
-./example/inject_instrumentation.py -f /bin/ls -i instrument_code -o myls
-./myls
+src/analysis/patch-binary.sh /bin/ls your_instrument_code ./newls
+./newls
 ```
-Note:
- - Instrumentation code written in C has limited support that only local variable and constant variable definition is supported. Global variable support will be future work.
+Note that instrumentation code written in C has the following limited support:
+ - only local variable and constant variable definition is supported.
+ - only system call wrapper and PLT functions are supported for hooking.
+ - only support hooking direct jumps and direct calls.
