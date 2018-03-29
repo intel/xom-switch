@@ -57,8 +57,8 @@ echo $execveaddr > $addrfile
 
 $scriptdir/patch_calls_of_origbin.sh $addrfile _wrapper_syscall_execve \
                                      $targetexe $elf2inject; 
-$scriptdir/patch_call_of_injectedbin.sh post_syscall_execve execve $targetexe \
-                                        $elf2inject $exe 13;
+$scriptdir/patch_call_of_injectedbin.sh post_syscall_execve syscall:execve \
+                                        $targetexe $elf2inject $exe 13;
 rm $newexe
 rm $addrfile
 

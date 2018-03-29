@@ -48,22 +48,28 @@ else
     echo "  [ERROR] invalid  function type"
     exit 1
 fi
+if [ "$syscalladdr" == "" ] || [ "$syscalladdr" == "0" ]; then
+    echo "  [ERROR] cannot find function $syscall"
+    exit 1
+fi
 echo "$fname"
 echo "$syscall wrapper function address: $syscalladdr"
 textoffset=$(r2 -qc "iS~.text[1]" $injectexe)
-echo $textoffset
+echo "textoffset: $textoffset"
 textoffset4BC=$(printf "%X" $textoffset)
 #we preserve the offset within page
 offsetinpage=$(echo "obase=10; ibase=16; $textoffset4BC % 1000" | bc)
 echo "offset in page: $offsetinpage"
 offsetinpageHEX=$(printf "0x%x" $offsetinpage)
 echo "offset in page (hex): $offsetinpageHEX"
-
-topatchoffset=$(r2 -qc "is~$callname[1]" $injectexe)
-echo $topatchoffset
+echo "callname: $callname"
+topatchoffset=$(r2 -qc "is~$callname$" $injectexe|head -1|awk '{print $2}')
+echo "topatchoffset: $topatchoffset"
+echo "textoffset: $textoffset"
+echo "callname: $callname"
 offset=$((topatchoffset - textoffset))
 base=$(r2 -qc "iS~.instrumented_code[3]" $exe)
-echo $base
+echo "base: $base"
 
 patchaddr=$((base + offset + offsetinpage))
 echo "address to patch: $patchaddr"

@@ -13,7 +13,7 @@ exe=$1
 injectexe=$2
 origexe=$3
 progdir=$(readlink -f $(dirname $0))
-readelf -s $injectexe |grep FUNC |awk '{print $8}' | grep "^original_"|\
+readelf -W -s $injectexe |grep FUNC |awk '{print $8}' | grep "^original_"|\
 while read callname; do
     cname=$(echo $callname|sed  's/^original_//g')
     ftype=$(echo $cname|awk -F"_" '{print $1}')
