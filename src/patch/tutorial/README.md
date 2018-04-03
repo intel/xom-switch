@@ -56,7 +56,7 @@ Run the following command to patch `tutorial` into `/bin/ls`:
 ```Bash
 src/analysis/patch-binary.sh /bin/ls src/patch/tutorial/tutorial ./my_ls
 ```
-#### Run and seee result
+#### Run and see result
 You may run `my_ls` and see the result as follows:
 ```
 **hacker** fwrite is hooked
