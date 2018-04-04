@@ -75,6 +75,7 @@ $scriptdir/patch_calls_of_origbin.sh $addrfile _wrapper_mmap $targetexe \
 echo "We add XOM related segments back to the ELF binary"
 $scriptdir/adjust_phnum.sh increase $targetexe
 
+$scriptdir/filling_gap.sh $targetexe
 rm $newexe
 rm $addrfile
 

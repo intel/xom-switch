@@ -23,8 +23,6 @@ void simple_printf(char *fmt, ...)
 void *wrapper_mmap(void *addr, size_t len, int prot, int flags, int filedes,
                    off_t off)
 {
-    int fd = 1;
-    char *info = "allocating an elf file!";
     void *res = ldso_mmap(addr, len, prot, flags, filedes, off);
     if(res != (void *)NULL && !(flags &= MAP_FIXED) &&
        (prot == (PROT_EXEC|PROT_READ)) && filedes > 0) {

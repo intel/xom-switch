@@ -49,18 +49,29 @@ char *get_elf_soname(void *base, Elf64_Ehdr *elfhdr)
 
 int check_elf_whitelist(void *base, Elf64_Ehdr *elfhdr)
 {
-    char *whitelist[] =  { "libffi.so.6", "libfreeblpriv3.so", "libavcodec.so.57", "libcrypto.so.1.0.0" };
-    int whitelistsize = sizeof(whitelist)/sizeof(char *);
+    typedef struct {
+        char *soname;
+        int len;
+    } whitelistlib;
+    whitelistlib whitelist[4] =  {
+                        {"libffi.so.6", sizeof("libffi.so.6") - 1},
+                        {"libfreeblpriv3.so", sizeof("libfreeblpriv3.so") - 1},
+                        {"libavcodec.so", sizeof("libavcodec.so") - 1},
+                        {"libcrypto.so", sizeof("libcrypto.so") - 1}
+                         };
+    int whitelistsize = sizeof(whitelist)/sizeof(whitelist[0]);
     char *soname = get_elf_soname(base, elfhdr);
     int idx = 0;
     if (soname == NULL) {
         /* Executable does not have SO_NAME. */
         return 0;
     }
-    //simple_printf("this elf is ===== :%s\n", soname);
+    //simple_printf("checking lib:%s\n", soname);
     for (idx = 0; idx < whitelistsize; idx++) {
-        if (strcmp(soname , whitelist[idx]) == 0)
+        if (strncmp(soname , whitelist[idx].soname, whitelist[idx].len) == 0) {
+            //simple_printf("Elf whitelisted ===== :%s\n", soname);
             return 1;
+        }
     }
     return 0;
 }
@@ -148,7 +159,6 @@ void implement_xom(void *base, size_t len, int prot, int flags, int fd, off_t of
     if(pgrodatasize > 0)
         ldso_mprotect((void *)pgupexecend, pgrodatasize, PROT_READ);
 
-    out:
     __syscall(__NR_munmap, (void *)pgsectable, pgsectablesize);
     return;
 }
