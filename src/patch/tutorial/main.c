@@ -3,10 +3,7 @@
 #include <stdio.h>
 /* This function represents an auto-generated stub code that contains a jump to
  * the original function 'printf'. */
-extern int original_pltcall_printf(const char *fmt, ...);
 extern int original_pltcall___printf_chk(int flag, const char *fmt, ...);
-extern int original_pltcall_strcpy(char *dest, const char *src);
-extern int original_pltcall___printf_chk(int flags, const char *fmt, ...);
 extern int original_pltcall_fwrite_unlocked(const void *ptr, size_t size,
                                              size_t n, FILE *stream);
 
@@ -34,17 +31,6 @@ extern int original_pltcall_fwrite_unlocked(const void *ptr, size_t size,
  * Note: calltype and original-function-name-or-address together help identify
  * the location of original function to hook.
  */
-
-/* intercepting calls to __printf_chk */
-int intercept_pltcall___printf_chk(int flags, const char *fmt, ...)
-{
-    va_list ap;
-    int ret;
-    va_start(ap, fmt);
-    ret = original_pltcall___printf_chk(flags, fmt, ap);
-    va_end(ap);
-    return ret;
-}
 
 /* intercepting calls to fwrite_unlocked */
 int intercept_pltcall_fwrite_unlocked(const void *ptr, size_t size, size_t n,
