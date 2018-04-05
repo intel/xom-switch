@@ -3,6 +3,8 @@
 
 xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux system. It aims to mitigate code disclosure guided ROP attacks. This is is the 1st tool using Intel's Memory Protection Keys (MPK) feature for XOM enabling. xom-switch protects all code modules in the runtime including executable and dependent libraries without requiring source code or heavyweight binary translation/rewriting. xom-switch uses non-intrusive way to intercept program runtime by instrumenting program loader (ld.so).
 
+**xom-switch could run in AMS AMI C5 VM. Try it out!**
+
 ## Background
 
 ### Why eXecutable-Only Memory
@@ -59,15 +61,20 @@ This code is published under GPLv2 version.
 
 ## Project Status
 
-This code is for demo purpose only and the status of code is **alpha**.
+This code is for demo purpose only and the status of code is **beta**.
 
-
+## Know Limitation
+xom-switch has known limitation in the following cases:
+ - When binaries has data embedded in the middle of code, xom-switch may crash. To avoid that xom-switch has a white list embedded in code. see
+ - Since code modules (exe and libs) are not compiled with XOM support, there would be at least two code pages (the 1st and last code page) for each module where code and data co-exist. xom-switch avoids the issue by marking them as readable and executable. In the future, we will solve that using static analysis.
 ## Task List
 
 - [x] Support CentOS 7.2.
 - [x] Support CentOS 7.4.
 - [x] Support Ubuntu 16.04.
 - [x] Support Ubuntu 17.04.
-- [ ] Support Amazon Linux 2 LTS Candidate AMI 2017.12.0 (HVM) with C5 instance.
+- [x] Support simple instrumentation like function interception.
+- [x] Support Amazon Linux 2 LTS Candidate AMI 2017.12.0 (HVM) C5 VM.
+- [ ] Adding page fault handling to let go legitimate data read.
 
 
