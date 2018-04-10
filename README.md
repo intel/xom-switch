@@ -5,6 +5,8 @@ xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux syste
 
 **xom-switch could run in AMS AMI C5 VM. Try it out!**
 
+**Fedora 28 will support GOT protection in lazy binding using memory protection keys. [Link1](https://www.phoronix.com/scan.php?page=news_item&px=Glibc-Memory-Protection-Keys), [Link2](https://fedoraproject.org/wiki/Changes/HardeningFlags28).**
+
 ## Background
 
 ### Why eXecutable-Only Memory
