@@ -3,7 +3,7 @@
 
 xom-switch is the eXecutable-Only-Memory (XOM) enabling tool for x86 Linux system. It aims to mitigate code disclosure guided ROP attacks. This is is the 1st tool using Intel's [Memory Protection Keys (MPK)](https://lwn.net/Articles/643797/) feature for XOM enabling. xom-switch protects all code modules in the runtime including executable and dependent libraries without requiring source code or heavyweight binary translation/rewriting. xom-switch uses non-intrusive way to intercept program runtime by instrumenting program loader (ld.so).
 
-**xom-switch could run in AMS AMI C5 VM. Try it out!**
+**xom-switch could run in [Amazon AWS C5 Instance](https://aws.amazon.com/ec2/instance-types/c5/). Try it out!**
 
 **Fedora 28 will support GOT protection in lazy binding using memory protection keys. [Link1](https://www.phoronix.com/scan.php?page=news_item&px=Glibc-Memory-Protection-Keys), [Link2](https://fedoraproject.org/wiki/Changes/HardeningFlags28).**
 
