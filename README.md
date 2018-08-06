@@ -38,7 +38,7 @@ To run xom-switch properly, you need to have hardware and OS support first:
 ### Software Prerequsites
 xom-switch requires two tools:
   - common tools: bc, binutils, gcc, python 2.7
-  - radare2: a static binary analyzer, which could be found in [here](https://github.com/radare/radare2.git)
+  - radare2 (v2.3.0): a static binary analyzer, which could be found in [here](https://github.com/radare/radare2.git)
 
 ### Components
 xom-switch consists of three modules:
